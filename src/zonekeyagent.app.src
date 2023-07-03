@@ -1,0 +1,20 @@
+{application, zonekeyagent,
+ [{description, "An OTP application"},
+  {vsn, "1.0.0"},
+  {registered, []},
+  {mod, {zka_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    lager,
+    esysevent,
+    ssh_agent,
+    ebox,
+    jsx
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {licenses, ["Apache-2.0"]},
+  {links, []}
+ ]}.
