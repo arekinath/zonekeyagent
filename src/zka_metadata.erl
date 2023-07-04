@@ -37,7 +37,7 @@ set_property(Zone, Property, Value) ->
     case file:read_file(MetaFile) of
         {ok, D0} ->
             M0 = jsx:decode(D0, [return_maps, {labels, atom}]),
-            #{internal_metadata := IM0} = M0,
+            IM0 = maps:get(internal_metadata, M0, #{}),
             IM1 = IM0#{Property => Value},
             M1 = M0#{internal_metadata => IM1},
             D1 = jsx:encode(M1, [space, indent]),

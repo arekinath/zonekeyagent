@@ -10,7 +10,10 @@
     esysevent,
     ssh_agent,
     ebox,
-    jsx
+    jsx,
+    public_key,
+    crypto,
+    ssh
    ]},
   {env,[]},
   {modules, []},

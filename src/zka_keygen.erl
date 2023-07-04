@@ -38,13 +38,15 @@ generate_all(Zone, KDir) ->
     case file:read_file(Path) of
         {ok, KD} ->
             [Ent] = public_key:pem_decode(KD),
-            PrivKey = public_key:pem_entry_decode(Ent);
+            _PrivKey = public_key:pem_entry_decode(Ent),
+            ok = file:change_mode(Path, 8#0600);
         _ ->
             lager:debug("generating new auth key for ~p", [Zone]),
             PrivKey = public_key:generate_key({namedCurve, secp256r1}),
             Ent = public_key:pem_entry_encode('ECPrivateKey', PrivKey),
             KD = public_key:pem_encode([Ent]),
             ok = file:write_file(Path, KD),
+            ok = file:change_mode(Path, 8#0600),
             PubKey = ssh_file:extract_public_key(PrivKey),
             SSHKey = ssh_file:encode([{PubKey, []}], auth_keys),
             zka_metadata:set_property(Zone, auth_key, SSHKey)
