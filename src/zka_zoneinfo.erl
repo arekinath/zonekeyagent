@@ -27,7 +27,7 @@
 
 -export([
     get/1,
-    list/0
+    list/0,
     ]).
 
 -on_load(init/0).
@@ -81,8 +81,18 @@ init() ->
     status => zonestatus()
     }.
 
+-spec get_async(zonename() | zoneid()) -> reference().
+get_async(_ZoneName) -> error(no_nif).
+
 -spec get(zonename() | zoneid()) -> {ok, zoneinfo()} | err_result().
-get(_ZoneName) -> error(no_nif).
+get(ZoneName) ->
+    Ref = get_async(ZoneName),
+    receive {Ref, Result} -> Result end.
+
+-spec list_async() -> reference().
+list_async() -> error(no_nif).
 
 -spec list() -> {ok, [zoneid()]} | err_result().
-list() -> error(no_nif).
+list() ->
+    Ref = list_async(),
+    receive {Ref, Result} -> Result end.
