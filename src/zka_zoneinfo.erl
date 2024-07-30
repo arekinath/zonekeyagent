@@ -27,7 +27,7 @@
 
 -export([
     get/1,
-    list/0,
+    list/0
     ]).
 
 -on_load(init/0).
