@@ -49,11 +49,11 @@ start_link() ->
 
 -spec get_or_start(binary()) -> {ok, pid()} | {error, term()}.
 get_or_start(Zone) ->
-    gen_server:call(?MODULE, {get_or_start, Zone}).
+    gen_server:call(?MODULE, {get_or_start, Zone}, infinity).
 
 -spec claim(binary()) -> ok | {error, term()}.
 claim(Zone) ->
-    gen_server:call(?MODULE, {claim, Zone, self()}).
+    gen_server:call(?MODULE, {claim, Zone, self()}, infinity).
 
 -record(?MODULE, {
     zs = #{} :: #{binary() => {pid(), reference()}},

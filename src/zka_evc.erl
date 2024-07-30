@@ -81,8 +81,13 @@ handle_info({sysevent, MsgRef, Info, Attrs}, S = #?MODULE{msgref = MsgRef}) ->
               <<"newstate">> := {string, StateBin}} = Attrs,
             State = binary_to_atom(StateBin, utf8),
             lager:debug("zone ~s going to state ~s", [Zone, State]),
-            {ok, Pid} = zka_zones:get_or_start(Zone),
-            zka_zone_fsm:state_change(Pid, State),
+            case zka_zones:get_or_start(Zone) of
+                {ok, Pid} ->
+                    zka_zone_fsm:state_change(Pid, State);
+                Err ->
+                    lager:error("error getting zone fsm for ~s: ~p",
+                        [Zone, Err])
+            end,
             {noreply, S};
         _ ->
             lager:debug("ignored sysevent: ~p", [Info]),

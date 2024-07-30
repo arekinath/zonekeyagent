@@ -44,10 +44,10 @@
     ]).
 
 start_link(Zone, SockPath, KeyDir) ->
-    gen_server:start_link(?MODULE, [Zone, SockPath, KeyDir], []).
+    gen_server:start_link(?MODULE, [Zone, SockPath, KeyDir], [{timeout, 30000}]).
 
 expand(Pid) ->
-    gen_server:call(Pid, expand).
+    gen_server:call(Pid, expand, infinity).
 
 stop(Pid) ->
     gen_server:call(Pid, stop, infinity).
