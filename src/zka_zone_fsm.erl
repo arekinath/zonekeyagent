@@ -128,6 +128,11 @@ await_running(info, {state_change, _Other}, #?MODULE{}) ->
     keep_state_and_data;
 await_running(state_timeout, check, S = #?MODULE{zone = Zone}) ->
     case zka_zoneinfo:get(Zone) of
+        {ok, #{status := running}} ->
+            % This is an extra back-stop in case we miss the transition
+            % on the sysevent channel somehow
+            self() ! {state_change, running},
+            {keep_state_and_data, [{state_timeout, 5000, check}]};
         {ok, _Info} ->
             {keep_state_and_data, [{state_timeout, 5000, check}]};
         _Err ->

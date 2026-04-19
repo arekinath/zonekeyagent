@@ -132,7 +132,6 @@ encode_identity(PubKey, Comment) ->
      CommentBin].
 
 handle_request_identities(S0 = #?MODULE{zone = Z, sock = Sock, keys = Keys}) ->
-    lager:debug("~s: request identities", [Z]),
     gen_tcp:send(Sock, [<<?SSH_AGENT_IDENTITIES_ANSWER, (length(Keys)):32/big>>,
         [encode_identity(Pub, Name) || {Pub, _Priv, Name} <- Keys]]),
     {noreply, S0}.
@@ -144,7 +143,6 @@ handle_sign_request(KeyBlob, Data, Flags, S0 = #?MODULE{zone = Z, sock = Sock, k
             lager:debug("~s: sign request for non-existent key", [Z]),
             gen_tcp:send(Sock, <<?SSH_AGENT_FAILURE>>);
         {PubKey, PrivKey, Name} ->
-            lager:debug("~s: sign request for key ~s", [Z, Name]),
             {Digest, Alg} = case PubKey of
                 {#'ECPoint'{}, {namedCurve, ?'secp256r1'}} ->
                     {sha256, <<"ecdsa-sha2-nistp256">>};
@@ -184,7 +182,6 @@ handle_sign_request(KeyBlob, Data, Flags, S0 = #?MODULE{zone = Z, sock = Sock, k
     {noreply, S0}.
 
 handle_extension(<<"query">>, _, S0 = #?MODULE{zone = Z, sock = Sock}) ->
-    lager:debug("~s: extension query", [Z]),
     Exts = [<<"query">>],
     gen_tcp:send(Sock, [<<?SSH_AGENT_SUCCESS, (length(Exts)):32/big>>,
         [[<<(byte_size(X)):32/big>>, X] || X <- Exts]]),
